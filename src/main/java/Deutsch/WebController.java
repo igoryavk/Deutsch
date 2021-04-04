@@ -10,6 +10,12 @@ import sun.jvm.hotspot.oops.CompressedOops;
 @Controller
 public class WebController {
     private DataObject dataObject;
+    private WordGenerator generator;
+
+    @Autowired
+    public void setGenerator(WordGenerator generator) {
+        this.generator = generator;
+    }
 
     @Autowired
     public void setDataObject(DataObject dataObject) {
@@ -29,5 +35,19 @@ public class WebController {
         System.out.println(wort.getRussisch_text());
         dataObject.saveWord(wort);
         return "savepage";
+    }
+    @RequestMapping("/getdict")
+    public String getDictionary(Model model)
+    {
+        generator.setWords(dataObject.getWordList());
+        generator.generate();
+        model.addAttribute("deutsch",generator.getDeutschWord());
+        return "dictionary";
+    }
+    @RequestMapping("/rus")
+    public String getRussisch(Model model)
+    {
+        model.addAttribute("russisch",generator.getRussisch());
+        return "russian";
     }
 }
